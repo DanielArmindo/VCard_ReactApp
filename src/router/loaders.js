@@ -1,5 +1,7 @@
-import { redirect } from "react-router-dom";
+import { defer, redirect } from "react-router-dom";
 import store from "../stores";
+import { getCategories, getCategory } from "../assets/api";
+import { verfIsNumber } from "../assets/utils";
 
 export function loginLoader() {
   // console.log("loader", store.getState().user, store.getState().user === null)
@@ -36,4 +38,34 @@ export function changeConfirmCodeLoader() {
     return redirect("/");
   }
   return null;
+}
+
+export async function categoriesLoader() {
+  const user = store.getState().user;
+  if (user === null) {
+    return redirect("/");
+  }
+  const categoriesPromise = getCategories({
+    type: user.user_type,
+    id: user.id,
+  });
+  return defer({ categories: categoriesPromise });
+}
+
+export async function categoryLoader({ params }) {
+  const user = store.getState().user;
+  if (user === null) {
+    return redirect("/");
+  }
+  if (params.id === "new") {
+    //Pode nao ser preciso o inserting
+    return null;
+  }
+  if (verfIsNumber(params.id)) {
+    return defer({
+      category: getCategory({ type: user.user_type, id: params.id }),
+    });
+  }
+
+  return redirect("/");
 }

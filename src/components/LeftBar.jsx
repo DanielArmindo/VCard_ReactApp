@@ -30,13 +30,13 @@ const LeftBar = (props) => {
           {userStore && (
             <ul className="nav flex-column">
               {/*Meter activo quando tiver caso e para a rota correpondente*/}
-              <li className="nav-item m-2">
-                <Link className="nav-link" to="">
+              <li className="nav-item mb-2">
+                <NavLink className={({ isActive }) => (isActive ? "active nav-link pt-3 pb-3" : "nav-link pt-3 pb-3")} to="categories">
                   <BsListCheck className="me-2" size={24} />
                   Categories
-                </Link>
+                </NavLink>
               </li>
-              <li className="nav-item m-2">
+              <li className="nav-item mb-2">
                 <Link className="nav-link" to="">
                   <BsFiles className="me-2" size={24} />
                   Statistics
@@ -45,19 +45,19 @@ const LeftBar = (props) => {
 
               {userStore?.user_type === "A" && (
                 <>
-                  <li className="nav-item m-2">
+                  <li className="nav-item mb-2">
                     <Link className="nav-link" to="" onClick={clickMenuOption}>
                       <BsPersonGear className="me-2" size={24} />
                       Admins
                     </Link>
                   </li>
-                  <li className="nav-item m-2">
+                  <li className="nav-item mb-2">
                     <Link className="nav-link" to="" onClick={clickMenuOption}>
                       <BsFiles className="me-2" size={24} />
                       VCards
                     </Link>
                   </li>
-                  <li className="nav-item m-2">
+                  <li className="nav-item mb-2">
                     <Link className="nav-link" to="">
                       <BsCash className="me-2" size={24} />
                       Credit transaction
@@ -66,7 +66,7 @@ const LeftBar = (props) => {
                 </>
               )}
               {userStore?.user_type !== "A" && (
-                <li className="nav-item m-2">
+                <li className="nav-item mb-2">
                   <Link className="nav-link" to="">
                     <BsBank className="me-2" size={24} />
                     Transactions
@@ -74,7 +74,7 @@ const LeftBar = (props) => {
                 </li>
               )}
               {userStore?.user_type === "V" && (
-                <li className="nav-item m-2">
+                <li className="nav-item mb-2">
                   <Link className="nav-link" to="">
                     <BsPiggyBank className="me-2" size={24} />
                     Piggy Bank

@@ -5,11 +5,11 @@ export function getPhotoURL(url) {
   return `${apiDomain}/storage/fotos/${url}`;
 }
 
-export function getUrlDomain(){
+export function getUrlDomain() {
   return apiDomain;
 }
 
-export function getWsConnection(){
+export function getWsConnection() {
   return wsConnection;
 }
 
@@ -18,7 +18,7 @@ export function getWsConnection(){
 export function verfPhoneNumber(numero) {
   // start with 9 and have 9 digits at total
   const regex = /^9\d{8}$/;
-  return regex.test(numero)
+  return regex.test(numero);
 }
 
 export function verfConfirmCode(numero) {
@@ -41,7 +41,15 @@ export function verfPassword(str) {
 
 export function verfUsername(str) {
   if (verfPhoneNumber(str) || verfEmail(str)) {
-    return true
+    return true;
   }
-  return false
+  return false;
+}
+
+export function verfStringNotEmpty(str) {
+  return str.trim() !== "";
+}
+
+export function verfIsNumber(str) {
+  return /^\d+$/.test(str);
 }

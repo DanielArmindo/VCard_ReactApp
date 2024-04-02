@@ -1,4 +1,10 @@
-import { changeCredentials, createVcard, login } from "../assets/api";
+import {
+  changeCredentials,
+  createVcard,
+  login,
+  createCategory as createCategoryApi,
+  updateCategory,
+} from "../assets/api";
 import * as utils from "../assets/utils";
 import store from "../stores";
 import { clear, getUser } from "../stores/user";
@@ -179,5 +185,98 @@ export async function changeConfirmCodeAction({ request }) {
       break;
   }
 
+  return null;
+}
+
+export async function createCategory({ request, params }) {
+  const formData = await request.formData();
+
+  //Inserting Category
+  if (params.id === "new") {
+    let error = {};
+
+    !utils.verfStringNotEmpty(formData.get("name")) &&
+      (error.name = "Category name cannot be empty!!");
+
+    if (formData.get("type") !== "C" && formData.get("type") !== "D") {
+      error.type = "The category type must be between C or D";
+    }
+
+    if (Object.keys(error).length !== 0) {
+      return error;
+    }
+
+    const user = store.getState().user;
+    const data = {
+      type: user.user_type,
+      data: {
+        vcard: user.user_type === "V" ? user.id : null,
+        name: formData.get("name"),
+        type: formData.get("type"),
+      },
+    };
+    const response = await createCategoryApi(data);
+
+    switch (response) {
+      case true:
+        toast.success(
+          `Category ${formData.get("name")} was created successfully!`,
+        );
+        return redirect("/categories");
+      case 422:
+        toast.error("Category was not created due to validation errors!");
+        break;
+      default:
+        toast.error("Category was not created due to unknown server error!");
+        break;
+    }
+  }
+
+  //Edit Category
+  if (utils.verfIsNumber(params.id)) {
+    let error = {};
+
+    !utils.verfStringNotEmpty(formData.get("name")) &&
+      (error.name = "Category name cannot be empty!!");
+
+    if (formData.get("type") !== "C" && formData.get("type") !== "D") {
+      error.type = "The category type must be between C or D";
+    }
+
+    if (Object.keys(error).length !== 0) {
+      return error;
+    }
+
+    const user = store.getState().user;
+    const data = {
+      type: user.user_type,
+      id: params.id,
+      data: {
+        vcard: user.user_type === "V" ? user.id : null,
+        name: formData.get("name"),
+        type: formData.get("type"),
+        id: params.id,
+      },
+    };
+
+    const response = await updateCategory(data);
+    switch (response) {
+      case true:
+        toast.success(
+          `Category ${formData.get("name")} was updated successfully!`,
+        );
+        return redirect("/categories");
+      case 422:
+        toast.error(
+          `Category #${params.id} was not updated due to validation errors!`,
+        );
+        break;
+      default:
+        toast.error(
+          `Category #${params.id} was not updated due to unknown server error!`,
+        );
+        break;
+    }
+  }
   return null;
 }

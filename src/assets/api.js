@@ -50,7 +50,7 @@ export async function changeCredentials(credentials, options) {
       : `users/${options.id}/password`;
 
     await api.patch(url, credentials);
-    clearTokken()
+    clearTokken();
     return true;
   } catch (error) {
     if (error.response && error.response.status) {
@@ -65,6 +65,89 @@ export async function changeCredentials(credentials, options) {
 export async function createVcard(data) {
   try {
     await api.post("/vcards", data);
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+// ============= Related to Categories
+
+export async function getCategories(obj) {
+  let url = "";
+  try {
+    switch (obj.type) {
+      case "V":
+        url = `vcards/${obj.id}/categories`;
+        break;
+      default:
+        url = "default-categories";
+        break;
+    }
+    const response = await api.get(url);
+    return response.data.data;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function getCategory(obj) {
+  let url = "";
+  try {
+    switch (obj.type) {
+      case "V":
+        url = `categories/`;
+        break;
+      default:
+        url = "default-categories/";
+        break;
+    }
+    const response = await api.get(url + obj.id);
+    return response.data.data;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function deleteCategory(obj) {
+  try {
+    const url = obj.type === "V" ? "categories" : "default-categories";
+    await api.delete(url + "/" + obj.id);
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function createCategory(obj) {
+  try {
+    const url = obj.type === "V" ? "categories" : "default-categories";
+    await api.post(url, obj.data);
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function updateCategory(obj) {
+  try {
+    const url = obj.type === "V" ? "categories/" : "default-categories/";
+    await api.put(url + obj.id, obj.data);
     return true;
   } catch (err) {
     if (err.response && err.response.status) {
