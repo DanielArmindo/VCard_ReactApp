@@ -17,6 +17,7 @@ categoriesLoader,
   changeConfirmCodeLoader,
   changePasswordLoader,
   loginLoader,
+  statisticsLoader,
   vcardLoader,
 } from "./loaders";
 //Imports of components
@@ -29,6 +30,7 @@ import VCard from "../components/vcards/VCard";
 import ChangeCredentials from "../components/auth/ChangeCredentials";
 import Categories from "../components/categories/Categories";
 import Category from "../components/categories/Category";
+import Statistics from "../components/statistics/Statistics";
 
 export const routes = createBrowserRouter(
   createRoutesFromElements(
@@ -60,6 +62,7 @@ export const routes = createBrowserRouter(
       />
       <Route path="categories" element={<Categories />} loader={categoriesLoader} />
       <Route path="categories/:id" action={createCategory} element={<Category />} loader={categoryLoader} />
+      <Route path="statistics" element={<Statistics />} loader={statisticsLoader} />
       <Route path="*" element={<NotFound />} />
     </Route>,
   ),

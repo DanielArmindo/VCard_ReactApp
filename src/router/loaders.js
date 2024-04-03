@@ -1,6 +1,6 @@
 import { defer, redirect } from "react-router-dom";
 import store from "../stores";
-import { getCategories, getCategory } from "../assets/api";
+import { getCategories, getCategory, getStatistics } from "../assets/api";
 import { verfIsNumber } from "../assets/utils";
 
 export function loginLoader() {
@@ -40,6 +40,7 @@ export function changeConfirmCodeLoader() {
   return null;
 }
 
+// ================== Categories
 export async function categoriesLoader() {
   const user = store.getState().user;
   if (user === null) {
@@ -68,4 +69,21 @@ export async function categoryLoader({ params }) {
   }
 
   return redirect("/");
+}
+
+// ================== Statistics
+export function statisticsLoader() {
+  const user = store.getState().user;
+  if (user === null) {
+    return redirect("/");
+  }
+  
+  const request = {
+    type: user.user_type,
+    id : user.id
+  }
+  
+  const response = getStatistics(request)
+
+  return defer({statistics: response});
 }

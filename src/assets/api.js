@@ -156,3 +156,26 @@ export async function updateCategory(obj) {
     return false;
   }
 }
+
+// ============= Related to Statistics
+
+export async function getStatistics(obj) {
+  let url = "";
+  try {
+    switch (obj.type) {
+      case "V":
+        url = `vcards/${obj.id}/statistics`;
+        break;
+      default:
+        url = "admins/statistics";
+        break;
+    }
+    const response = await api.get(url);
+    return response.data.data;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
