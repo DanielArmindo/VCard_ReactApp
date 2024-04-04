@@ -1,6 +1,12 @@
 import { defer, redirect } from "react-router-dom";
 import store from "../stores";
-import { getCategories, getCategory, getStatistics } from "../assets/api";
+import {
+  getAdmins,
+  getCategories,
+  getCategory,
+  getStatistics,
+  getAdmin,
+} from "../assets/api";
 import { verfIsNumber } from "../assets/utils";
 
 export function loginLoader() {
@@ -59,7 +65,6 @@ export async function categoryLoader({ params }) {
     return redirect("/");
   }
   if (params.id === "new") {
-    //Pode nao ser preciso o inserting
     return null;
   }
   if (verfIsNumber(params.id)) {
@@ -77,13 +82,44 @@ export function statisticsLoader() {
   if (user === null) {
     return redirect("/");
   }
-  
+
   const request = {
     type: user.user_type,
-    id : user.id
-  }
-  
-  const response = getStatistics(request)
+    id: user.id,
+  };
 
-  return defer({statistics: response});
+  const response = getStatistics(request);
+
+  return defer({ statistics: response });
+}
+
+// ================== Admins
+export function adminsLoader() {
+  const user = store.getState().user;
+  if (user === null || user.user_type !== "A") {
+    return redirect("/");
+  }
+
+  return defer({ admins: getAdmins() });
+}
+
+export function adminLoader({ params }) {
+  const user = store.getState().user;
+  if (user === null || user.user_type !== "A") {
+    return redirect("/");
+  }
+  if (params.id === "new") {
+    return defer({ edit: false });
+  }
+  if (verfIsNumber(params.id)) {
+    if (user.id !== parseInt(params.id)) {
+      return redirect("/");
+    }
+    return defer({
+      admin: getAdmin(params.id),
+      edit: true,
+    });
+  }
+
+  return redirect("/");
 }

@@ -179,3 +179,65 @@ export async function getStatistics(obj) {
     return false;
   }
 }
+
+// ============= Related to Admins
+
+export async function getAdmins() {
+  try {
+    const response = await api.get("admins");
+    return response.data.data;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function getAdmin(id) {
+  try {
+    const response = await api.get("admins/" + id);
+    return response.data.data;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function createAdmin(data) {
+  try {
+    await api.post("admins", data);
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function updateAdmin(data) {
+  try {
+    await api.put("admins/" + data.id, data);
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function deleteAdmin(id) {
+  try {
+    await api.delete("admins/" + id);
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}

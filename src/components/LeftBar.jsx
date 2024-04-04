@@ -18,7 +18,7 @@ import defaultImg from "../assets/imgs/avatar-none.png";
 const LeftBar = (props) => {
   const userStore = props.user;
   const clickMenuOption = props.clickMenuOption;
-  const logout = props.logout
+  const logout = props.logout;
 
   return (
     <nav
@@ -31,13 +31,27 @@ const LeftBar = (props) => {
             <ul className="nav flex-column">
               {/*Meter activo quando tiver caso e para a rota correpondente*/}
               <li className="nav-item mb-2">
-                <NavLink className={({ isActive }) => (isActive ? "active nav-link pt-3 pb-3" : "nav-link pt-3 pb-3")} to="categories">
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "active nav-link pt-3 pb-3"
+                      : "nav-link pt-3 pb-3"
+                  }
+                  to="categories"
+                >
                   <BsListCheck className="me-2" size={24} />
                   Categories
                 </NavLink>
               </li>
               <li className="nav-item mb-2">
-                <NavLink className={({ isActive }) => (isActive ? "active nav-link pt-3 pb-3" : "nav-link pt-3 pb-3")} to="statistics">
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "active nav-link pt-3 pb-3"
+                      : "nav-link pt-3 pb-3"
+                  }
+                  to="statistics"
+                >
                   <BsFiles className="me-2" size={24} />
                   Statistics
                 </NavLink>
@@ -46,10 +60,18 @@ const LeftBar = (props) => {
               {userStore?.user_type === "A" && (
                 <>
                   <li className="nav-item mb-2">
-                    <Link className="nav-link" to="" onClick={clickMenuOption}>
+                    <NavLink
+                      className={({ isActive }) =>
+                        isActive
+                          ? "active nav-link pt-3 pb-3"
+                          : "nav-link pt-3 pb-3"
+                      }
+                      to="admins"
+                      onClick={clickMenuOption}
+                    >
                       <BsPersonGear className="me-2" size={24} />
                       Admins
-                    </Link>
+                    </NavLink>
                   </li>
                   <li className="nav-item mb-2">
                     <Link className="nav-link" to="" onClick={clickMenuOption}>
@@ -119,19 +141,27 @@ const LeftBar = (props) => {
                     aria-labelledby="navbarDropdownMenuLink2"
                   >
                     <li>
-                      <Link
-                        className="dropdown-item"
-                        to=""
+                      <NavLink
+                        className={({ isActive }) =>
+                          isActive ? "active dropdown-item" : "dropdown-item"
+                        }
+                        to={
+                          userStore.user_type === "A"
+                            ? `admins/${userStore.id}`
+                            : ""
+                        }
                         onClick={clickMenuOption}
                       >
                         <BsPersonSquare className="me-2" size={24} />
                         Profile
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
                       <NavLink
-                        className={({ isActive }) => (isActive ? "active dropdown-item" : "dropdown-item")}
+                        className={({ isActive }) =>
+                          isActive ? "active dropdown-item" : "dropdown-item"
+                        }
                         to="credentials/password"
                         onClick={clickMenuOption}
                       >
@@ -142,7 +172,9 @@ const LeftBar = (props) => {
                     {userStore?.user_type === "V" && (
                       <li>
                         <NavLink
-                          className={({ isActive }) => (isActive ? "active dropdown-item" : "dropdown-item")}
+                          className={({ isActive }) =>
+                            isActive ? "active dropdown-item" : "dropdown-item"
+                          }
                           to="credentials/confirmation_code"
                           onClick={clickMenuOption}
                         >
@@ -165,14 +197,22 @@ const LeftBar = (props) => {
               ) : (
                 <>
                   <li className="nav-item">
-                    <NavLink className={({ isActive }) => (isActive ? "active nav-link" : "nav-link")} to="vcards/new" onClick={clickMenuOption}>
+                    <NavLink
+                      className={({ isActive }) =>
+                        isActive ? "active nav-link" : "nav-link"
+                      }
+                      to="vcards/new"
+                      onClick={clickMenuOption}
+                    >
                       <BsFillPersonCheckFill className="me-2" size={24} />
                       Register
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink
-                      className={({ isActive }) => (isActive ? "active nav-link" : "nav-link")}
+                      className={({ isActive }) =>
+                        isActive ? "active nav-link" : "nav-link"
+                      }
                       to="login"
                       onClick={clickMenuOption}
                     >

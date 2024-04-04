@@ -77,7 +77,7 @@ const Category = () => {
         >
           Cancel
         </button>
-      </div>{" "}
+      </div>
     </Form>
   );
 };

@@ -4,6 +4,8 @@ import {
   login,
   createCategory as createCategoryApi,
   updateCategory,
+  createAdmin as createAdminApi,
+  updateAdmin,
 } from "../assets/api";
 import * as utils from "../assets/utils";
 import store from "../stores";
@@ -274,6 +276,102 @@ export async function createCategory({ request, params }) {
       default:
         toast.error(
           `Category #${params.id} was not updated due to unknown server error!`,
+        );
+        break;
+    }
+  }
+  return null;
+}
+
+export async function createAdmin({ request, params }) {
+  const formData = await request.formData();
+
+  //Inserting Admin
+  if (params.id === "new") {
+    let error = {};
+
+    !utils.verfStringNotEmpty(formData.get("name")) &&
+      (error.name = "Name cannot be empty!!");
+
+    !utils.verfEmail(formData.get("email")) &&
+      (error.email = "Must be email format!!");
+
+    !utils.verfPassword(formData.get("password")) &&
+      (error.password = "The password must be at least 3 characters long!!");
+
+    !utils.verfPassword(formData.get("passwordConfirmation")) &&
+      (error.passwordConfirmation =
+        "The password confirmation must be at least 3 characters long!!");
+
+    if (Object.keys(error).length !== 0) {
+      return error;
+    }
+
+    if (formData.get("passwordConfirmation") !== formData.get("password")) {
+      toast.error(
+        "The password and confirmation password fields must be the same!",
+      );
+      return null;
+    }
+
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      password_confirmation: formData.get("passwordConfirmation"),
+    };
+    const response = await createAdminApi(data);
+
+    switch (response) {
+      case true:
+        toast.success(
+          `Admin '${formData.get("name")}' was created successfully!`,
+        );
+        return redirect("/admins");
+      case 422:
+        toast.error("Admin was not created due to validation errors!");
+        break;
+      default:
+        toast.error("Admin was not created due to unknown server error!");
+        break;
+    }
+  }
+
+  //Edit Admin
+  if (utils.verfIsNumber(params.id)) {
+    let error = {};
+
+    !utils.verfStringNotEmpty(formData.get("name")) &&
+      (error.name = "Name cannot be empty!!");
+
+    !utils.verfEmail(formData.get("email")) &&
+      (error.email = "Must be email format!!");
+
+    if (Object.keys(error).length !== 0) {
+      return error;
+    }
+
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      id: params.id,
+    };
+
+    const response = await updateAdmin(data);
+    switch (response) {
+      case true:
+        toast.success("Admin #" + params.id + " was updated successfully.");
+        return redirect("/admins");
+      case 422:
+        toast.error(
+          "Admin #" + params.id + " was not updated due to validation errors!",
+        );
+        break;
+      default:
+        toast.error(
+          "Admin #" +
+            params.id +
+            " was not updated due to unknown server error!",
         );
         break;
     }

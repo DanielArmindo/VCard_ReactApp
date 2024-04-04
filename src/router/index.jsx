@@ -7,11 +7,14 @@ import {
 import {
   changeConfirmCodeAction,
   changePasswordAction,
+  createAdmin,
   createCategory,
   loginAction,
   vcardAction,
 } from "./actions";
 import {
+adminLoader,
+adminsLoader,
 categoriesLoader,
   categoryLoader,
   changeConfirmCodeLoader,
@@ -31,6 +34,8 @@ import ChangeCredentials from "../components/auth/ChangeCredentials";
 import Categories from "../components/categories/Categories";
 import Category from "../components/categories/Category";
 import Statistics from "../components/statistics/Statistics";
+import Admins from "../components/admins/Admins";
+import Admin from "../components/admins/Admin";
 
 export const routes = createBrowserRouter(
   createRoutesFromElements(
@@ -60,6 +65,8 @@ export const routes = createBrowserRouter(
         loader={changeConfirmCodeLoader}
         element={<ChangeCredentials changeConfirmationCode={true} />}
       />
+      <Route path="admins" element={<Admins />} loader={adminsLoader}  />
+      <Route path="admins/:id" element={<Admin />} action={createAdmin} loader={adminLoader} />
       <Route path="categories" element={<Categories />} loader={categoriesLoader} />
       <Route path="categories/:id" action={createCategory} element={<Category />} loader={categoryLoader} />
       <Route path="statistics" element={<Statistics />} loader={statisticsLoader} />

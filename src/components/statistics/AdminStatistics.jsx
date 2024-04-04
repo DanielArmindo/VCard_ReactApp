@@ -25,7 +25,6 @@ const AdminStatistics = (props) => {
       setStatistics(data);
       setThisMonthTransactions(thisMonthTransactionsFunc(data));
       setThisMonthNewVcards(thisMonthNewVcardsFunc(data));
-      console.log(data)
       loadCharts(data);
     });
   }, [props.data.statistics]);
@@ -51,7 +50,6 @@ const AdminStatistics = (props) => {
     var monthName = new Date(0, monthIndex).toLocaleString("en", {
       month: "long",
     });
-    console.log(monthName);
     return (
       filteredTransactions(data).find(
         (transaction) => transaction.month_name === monthName,
