@@ -105,10 +105,17 @@ const LeftBar = (props) => {
               )}
               {userStore?.user_type === "V" && (
                 <li className="nav-item mb-2">
-                  <Link className="nav-link" to="">
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive
+                        ? "active nav-link pt-3 pb-3"
+                        : "nav-link pt-3 pb-3"
+                    }
+                    to="piggybank"
+                  >
                     <BsPiggyBank className="me-2" size={24} />
                     Piggy Bank
-                  </Link>
+                  </NavLink>
                 </li>
               )}
             </ul>

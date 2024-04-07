@@ -8,6 +8,7 @@ import {
   getAdmin,
   getVcards,
   getVcard,
+  getPiggybank,
 } from "../assets/api";
 import { verfIsNumber, verfPhoneNumber } from "../assets/utils";
 
@@ -105,6 +106,16 @@ export function statisticsLoader() {
   const response = getStatistics(request);
 
   return defer({ statistics: response });
+}
+
+// ================== Piggybank
+export function piggybankLoader() {
+  const user = store.getState().user;
+  if (user === null || user.user_type !== "V") {
+    return redirect("/");
+  }
+
+  return defer({data: getPiggybank(user.id)});
 }
 
 // ================== Admins

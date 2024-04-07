@@ -128,7 +128,7 @@ export async function deleteVcard(obj) {
     if (obj.user_type === "A") {
       await api.delete("vcards/" + obj.id);
     } else {
-      await api.delete("vcards/" + obj.id, {data:obj.data});
+      await api.delete("vcards/" + obj.id, { data: obj.data });
     }
     return true;
   } catch (err) {
@@ -240,6 +240,48 @@ export async function getStatistics(obj) {
   } catch (err) {
     if (err.response && err.response.status) {
       return err.response;
+    }
+    return false;
+  }
+}
+
+// ============= Related to Piggybank
+
+export async function getPiggybank(id) {
+  try {
+    const response = await api.get(`vcards/${id}/piggybank`);
+    return response.data.Mealheiro;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function updateSavings(obj) {
+  try {
+    await api.patch(`vcards/${obj.id}/piggybank/${obj.type}`, {
+      value: obj.data,
+    });
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response.data?.message;
+    }
+    return false;
+  }
+}
+
+export async function updateSpareChange(obj){
+try {
+    await api.patch(`vcards/${obj.id}/piggybank/sparechange`, {
+      spare_change: obj.data,
+    });
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response.data?.message;
     }
     return false;
   }

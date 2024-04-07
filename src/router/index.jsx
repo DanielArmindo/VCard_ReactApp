@@ -20,6 +20,7 @@ import {
   changeConfirmCodeLoader,
   changePasswordLoader,
   loginLoader,
+  piggybankLoader,
   statisticsLoader,
   vcardLoader,
   vcardsLoader,
@@ -38,6 +39,7 @@ import Statistics from "../components/statistics/Statistics";
 import Admins from "../components/admins/Admins";
 import Admin from "../components/admins/Admin";
 import Vcards from "../components/vcards/Vcards";
+import Piggybank from "../components/piggybank/Piggybank";
 
 export const routes = createBrowserRouter(
   createRoutesFromElements(
@@ -92,6 +94,7 @@ export const routes = createBrowserRouter(
         element={<Statistics />}
         loader={statisticsLoader}
       />
+      <Route path="piggybank" element={<Piggybank />} loader={piggybankLoader} />
       <Route path="*" element={<NotFound />} />
     </Route>,
   ),
