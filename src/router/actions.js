@@ -6,6 +6,8 @@ import {
   updateCategory,
   createAdmin as createAdminApi,
   updateAdmin,
+  patchVcard,
+  putVcard,
 } from "../assets/api";
 import * as utils from "../assets/utils";
 import store from "../stores";
@@ -50,7 +52,8 @@ export async function loginAction({ request }) {
   return null;
 }
 
-export async function vcardAction({ request }) {
+export async function vcardAction({ request, params }) {
+  const user = store.getState().user;
   const formData = await request.formData();
 
   //Implementado apenas para criar vcard ainda
@@ -58,32 +61,119 @@ export async function vcardAction({ request }) {
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
-    phone_number: formData.get("phone"),
+    phone_number: formData.get("phone_number"),
     photo_url: formData.get("photo_url"),
-    deletePhotoOnTheServer:
-      formData.get("deletePhotoOnTheServer") == "true" ? true : false,
-    base64ImagePhoto: formData.get("base64ImagePhoto"),
+    deletePhotoOnTheServer: formData.get("photoServer") === "on" ? true : false,
+    base64ImagePhoto: formData.get("base64"),
     confirmation_code: formData.get("confirmCode"),
+    max_debit: parseInt(formData.get("max_debit")),
+    blocked: formData.get("blocked") === "on" ? 1 : 0,
   };
 
   let error = {};
+  let response = null;
 
-  !utils.verfPhoneNumber(requestData.phone_number) &&
-    (error.phone = "Deve começar com 9 e ter 9 digitos");
-  !utils.verfEmail(requestData.email) &&
-    (error.email = "Deve ser do formato de email");
-  !utils.verfPassword(requestData.password) &&
-    (error.password = "Password dever ter no minimo 3 caracteres");
-  !utils.verfConfirmCode(requestData.confirmation_code) &&
-    (error.code = "Code deve ter 3 digitos");
+  //Create New Vcard
+  if (params.id === "new") {
+    !utils.verfPhoneNumber(requestData.phone_number) &&
+      (error.phone = "Deve começar com 9 e ter 9 digitos");
+    !utils.verfEmail(requestData.email) &&
+      (error.email = "Deve ser do formato de email");
+    !utils.verfPassword(requestData.password) &&
+      (error.password = "Password dever ter no minimo 3 caracteres");
+    !utils.verfConfirmCode(requestData.confirmation_code) &&
+      (error.code = "Code deve ter 3 digitos");
+    !utils.verfStringNotEmpty(requestData.name) &&
+      (error.name = "Vcard name cannot be empty!!");
 
-  if (Object.keys(error).length !== 0) {
-    return error;
+    if (Object.keys(error).length !== 0) {
+      return error;
+    }
+
+    response = await createVcard({
+      phone_number: requestData.phone_number,
+      name: requestData.name,
+      email: requestData.email,
+      password: requestData.password,
+      confirmation_code: requestData.confirmation_code,
+      base64ImagePhoto: requestData.base64ImagePhoto,
+    });
+
+    switch (response) {
+      case true:
+        toast.success(`Vcard was registered successfully.`);
+        await login({
+          username: requestData.phone_number,
+          password: requestData.password,
+        });
+        store.dispatch(getUser());
+        return redirect("/");
+      case 422:
+        toast.error(`Vcard was not registered due to validation errors!`);
+        break;
+      default:
+        toast.error(`Vcard was not registered due to unknown server error!`);
+        break;
+    }
+  } else {
+    //When Update Vcard by Admin or by owner Vcard
+    if (user.user_type === "A") {
+      !utils.verfIsNumber(requestData.max_debit) &&
+        (error.max_debit = "Must be a Number");
+
+      if (Object.keys(error).length !== 0) {
+        return error;
+      }
+
+      response = await patchVcard({
+        id: params.id,
+        data: {
+          max_debit: requestData.max_debit,
+          blocked: requestData.blocked,
+        },
+      });
+    } else {
+      !utils.verfEmail(requestData.email) &&
+        (error.email = "Must be email format");
+      !utils.verfStringNotEmpty(requestData.name) &&
+        (error.name = "Vcard name cannot be empty!!");
+
+      if (Object.keys(error).length !== 0) {
+        return error;
+      }
+
+      response = await putVcard({
+        id: params.id,
+        data: {
+          name: requestData.name,
+          email: requestData.email,
+          base64ImagePhoto: requestData.base64ImagePhoto,
+          deletePhotoOnTheServer: requestData.deletePhotoOnTheServer,
+        },
+      });
+    }
+
+    //colocar socket emit para blocked ou quando o max_debit for alterado
+
+    switch (response) {
+      case true:
+        toast.success(`Vcard #${params.id} was updated successfully.`);
+        user.user_type === "V" && store.dispatch(getUser());
+        return user.user_type === "A" ? redirect("/vcards") : redirect("/");
+      case 422:
+        toast.error(
+          `Vcard #${params.id} was not updated due to validation errors!`,
+        );
+        break;
+      default:
+        toast.error(
+          `Vcard #${params.id} was not updated due to unknown server error!`,
+        );
+        break;
+    }
   }
 
-  const response = await createVcard(requestData);
-
-  return response;
+  return null;
 }
 
 export async function changePasswordAction({ request }) {

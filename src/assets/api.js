@@ -74,6 +74,71 @@ export async function createVcard(data) {
   }
 }
 
+export async function getVcard(id) {
+  try {
+    const response = await api.get("vcards/" + id);
+    return response.data.data;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function getVcards(page = 1, params = "") {
+  try {
+    const filter = params ? `&${params}` : "";
+    const response = await api.get(`vcards?page=${page}${filter}`);
+    return { vcards: response.data.data, meta: response.data.meta };
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function patchVcard(obj) {
+  try {
+    await api.patch("vcards/" + obj.id, obj.data);
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function putVcard(obj) {
+  try {
+    await api.put("vcards/" + obj.id, obj.data);
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function deleteVcard(obj) {
+  try {
+    if (obj.user_type === "A") {
+      await api.delete("vcards/" + obj.id);
+    } else {
+      await api.delete("vcards/" + obj.id, {data:obj.data});
+    }
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response.data?.message;
+    }
+    return false;
+  }
+}
+
 // ============= Related to Categories
 
 export async function getCategories(obj) {

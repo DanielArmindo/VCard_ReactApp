@@ -74,10 +74,18 @@ const LeftBar = (props) => {
                     </NavLink>
                   </li>
                   <li className="nav-item mb-2">
-                    <Link className="nav-link" to="" onClick={clickMenuOption}>
+                    <NavLink
+                      className={({ isActive }) =>
+                        isActive
+                          ? "active nav-link pt-3 pb-3"
+                          : "nav-link pt-3 pb-3"
+                      }
+                      to="vcards"
+                      onClick={clickMenuOption}
+                    >
                       <BsFiles className="me-2" size={24} />
                       VCards
-                    </Link>
+                    </NavLink>
                   </li>
                   <li className="nav-item mb-2">
                     <Link className="nav-link" to="">
@@ -148,7 +156,7 @@ const LeftBar = (props) => {
                         to={
                           userStore.user_type === "A"
                             ? `admins/${userStore.id}`
-                            : ""
+                            : `vcards/${userStore.id}`
                         }
                         onClick={clickMenuOption}
                       >

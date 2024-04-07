@@ -6,8 +6,10 @@ import {
   getCategory,
   getStatistics,
   getAdmin,
+  getVcards,
+  getVcard,
 } from "../assets/api";
-import { verfIsNumber } from "../assets/utils";
+import { verfIsNumber, verfPhoneNumber } from "../assets/utils";
 
 export function loginLoader() {
   // console.log("loader", store.getState().user, store.getState().user === null)
@@ -15,21 +17,6 @@ export function loginLoader() {
     return redirect("/");
   }
   return null;
-}
-
-export function vcardLoader({ params }) {
-  const edit = true;
-  if (params.id === "new") {
-    if (sessionStorage.getItem("tokken")) {
-      return redirect("/");
-    }
-  } else {
-    // if (!Number.isInteger(params.id)) {
-    //   return redirect("/");
-    // }
-  }
-
-  return { id: params.id, edit: edit };
 }
 
 export function changePasswordLoader() {
@@ -44,6 +31,33 @@ export function changeConfirmCodeLoader() {
     return redirect("/");
   }
   return null;
+}
+
+// ================== Vcards
+export function vcardLoader({ params }) {
+  const user = store.getState().user;
+  if (params.id === "new") {
+    if (user !== null) {
+      return redirect("/");
+    }
+    return { create: true };
+  } else {
+    if (
+      !verfPhoneNumber(params.id) ||
+      (user.user_type === "V" && user.id !== parseInt(params.id))
+    ) {
+      return redirect("/");
+    }
+    return defer({ vcard: getVcard(params.id), create: false });
+  }
+}
+
+export function vcardsLoader() {
+  const user = store.getState().user;
+  if (user === null || user.user_type !== "A") {
+    return redirect("/");
+  }
+  return defer({ vcards: getVcards() });
 }
 
 // ================== Categories

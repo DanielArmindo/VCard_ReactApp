@@ -1,8 +1,4 @@
-import {
-  Form,
-  useActionData,
-  useNavigation,
-} from "react-router-dom";
+import { Form, useActionData, useNavigation } from "react-router-dom";
 import { useState } from "react";
 
 const ChangeCredentials = (props) => {
@@ -152,7 +148,12 @@ const ChangeCredentials = (props) => {
       </div>
 
       <div className="mb-3 d-flex justify-content-center">
-        <button className="btn btn-primary px-5">{title}</button>
+        <button
+          className="btn btn-primary px-5"
+          disabled={navigation.state === "submitting"}
+        >
+          {title}
+        </button>
       </div>
     </Form>
   );

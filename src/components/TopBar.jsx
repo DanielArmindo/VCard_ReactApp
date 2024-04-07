@@ -93,7 +93,7 @@ const TopBar = (props) => {
                     isActive ? "active dropdown-item" : "dropdown-item"
                   }
                   to={
-                    userStore.user_type === "A" ? `admins/${userStore.id}` : ""
+                    userStore.user_type === "A" ? `admins/${userStore.id}` : `vcards/${userStore.id}`
                   }
                   onClick={clickMenuOption}
                 >

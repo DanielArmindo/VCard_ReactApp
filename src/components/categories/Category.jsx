@@ -16,10 +16,12 @@ const Category = () => {
   const [title, setTitle] = useState("New Category");
 
   useEffect(() => {
-    loaderData?.category?.then((data) => {
-      setCategory(data);
-      setTitle(`Category #${data.id}`);
-    });
+    if (errors === undefined) {
+      loaderData?.category?.then((data) => {
+        setCategory(data);
+        setTitle(`Category #${data.id}`);
+      });
+    }
   }, [loaderData]);
 
   //Only for handle error of uncontrolled inputs
@@ -67,7 +69,10 @@ const Category = () => {
         {errors?.type && <p className="text-red">{errors.type}</p>}
       </div>
       <div className="mb-3 d-flex justify-content-end">
-        <button className="btn btn-primary px-5">
+        <button
+          className="btn btn-primary px-5"
+          disabled={navigation.state === "submitting"}
+        >
           {navigation.state === "submitting" ? "Saving..." : "Save"}
         </button>
         <button

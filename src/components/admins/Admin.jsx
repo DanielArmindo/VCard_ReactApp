@@ -1,4 +1,10 @@
-import { Form, useActionData, useLoaderData, useNavigate } from "react-router-dom";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 import "../../assets/admin.css";
 import { useState, useEffect } from "react";
 import avatarNoneUrl from "../../assets/imgs/avatar-none.png";
@@ -7,6 +13,7 @@ const Admin = () => {
   const [title, setTitle] = useState("Register a new admin");
   const dataPromise = useLoaderData();
   const navigate = useNavigate();
+  const navigation = useNavigation();
   const errors = useActionData();
   const [admin, setAdmin] = useState({});
 
@@ -19,10 +26,12 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    dataPromise?.admin?.then((data) => {
-      setAdmin(data);
-      setTitle(`Admin #${data.id}`);
-    });
+    if (errors === undefined) {
+      dataPromise?.admin?.then((data) => {
+        setAdmin(data);
+        setTitle(`Admin #${data.id}`);
+      });
+    }
   }, [dataPromise]);
 
   return (
@@ -37,12 +46,14 @@ const Admin = () => {
             </label>
             <input
               type="text"
-              className={!errors?.name ? "form-control" : "is-invalid form-control"}
+              className={
+                !errors?.name ? "form-control" : "is-invalid form-control"
+              }
               id="inputName"
               name="name"
               onChange={handleChange}
               placeholder="User Name"
-              value={admin?.name ?? ''}
+              value={admin?.name ?? ""}
               required
             />
             {errors?.name && <p className="text-red">{errors.name}</p>}
@@ -53,12 +64,14 @@ const Admin = () => {
             </label>
             <input
               type="email"
-              className={!errors?.email ? "form-control" : "is-invalid form-control"}
+              className={
+                !errors?.email ? "form-control" : "is-invalid form-control"
+              }
               name="email"
               id="inputEmail"
               onChange={handleChange}
               placeholder="Email"
-              value={admin?.email ?? ''}
+              value={admin?.email ?? ""}
               required
             />
             {errors?.email && <p className="text-red">{errors.email}</p>}
@@ -71,12 +84,18 @@ const Admin = () => {
                 </label>
                 <input
                   type="password"
-                  className={!errors?.password ? "form-control" : "is-invalid form-control"}
+                  className={
+                    !errors?.password
+                      ? "form-control"
+                      : "is-invalid form-control"
+                  }
                   id="inputPassword"
                   name="password"
                   placeholder="New Password"
                 />
-                {errors?.password && <p className="text-red">{errors.password}</p>}
+                {errors?.password && (
+                  <p className="text-red">{errors.password}</p>
+                )}
               </div>
               <div className="mb-3">
                 <label
@@ -88,11 +107,17 @@ const Admin = () => {
                 <input
                   type="password"
                   name="passwordConfirmation"
-                  className={!errors?.passwordConfirmation ? "form-control" : "is-invalid form-control"}
+                  className={
+                    !errors?.passwordConfirmation
+                      ? "form-control"
+                      : "is-invalid form-control"
+                  }
                   id="inputPasswordConfirmation"
                   placeholder="Password Confirmation"
                 />
-                {errors?.passwordConfirmation && <p className="text-red">{errors.passwordConfirmation}</p>}
+                {errors?.passwordConfirmation && (
+                  <p className="text-red">{errors.passwordConfirmation}</p>
+                )}
               </div>
             </>
           )}
@@ -108,7 +133,12 @@ const Admin = () => {
       </div>
       <hr />
       <div className="mt-2 d-flex justify-content-end">
-        <button className="btn btn-primary px-5 mx-2">Save</button>
+        <button
+          className="btn btn-primary px-5 mx-2"
+          disabled={navigation.state === "submitting"}
+        >
+          {navigation.state === "submitting" ? "Saving..." : "Save"}
+        </button>
         <button
           type="button"
           className="btn btn-light px-5 mx-2"

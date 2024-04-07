@@ -110,7 +110,7 @@ const Categories = () => {
           <h3 className="mt-4">Categories</h3>
         </div>
         <div className="mx-2 total-filtro">
-          <h5 className="mt-4">Total: {categories.length}</h5>
+          <h5 className="mt-4">Total: {categories?.length}</h5>
         </div>
       </div>
       <hr />

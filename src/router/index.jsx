@@ -13,15 +13,16 @@ import {
   vcardAction,
 } from "./actions";
 import {
-adminLoader,
-adminsLoader,
-categoriesLoader,
+  adminLoader,
+  adminsLoader,
+  categoriesLoader,
   categoryLoader,
   changeConfirmCodeLoader,
   changePasswordLoader,
   loginLoader,
   statisticsLoader,
   vcardLoader,
+  vcardsLoader,
 } from "./loaders";
 //Imports of components
 import Layout from "../components/Layout";
@@ -36,6 +37,7 @@ import Category from "../components/categories/Category";
 import Statistics from "../components/statistics/Statistics";
 import Admins from "../components/admins/Admins";
 import Admin from "../components/admins/Admin";
+import Vcards from "../components/vcards/Vcards";
 
 export const routes = createBrowserRouter(
   createRoutesFromElements(
@@ -46,12 +48,6 @@ export const routes = createBrowserRouter(
         element={<Login />}
         action={loginAction}
         loader={loginLoader}
-      />
-      <Route
-        path="vcards/:id"
-        element={<VCard />}
-        action={vcardAction}
-        loader={vcardLoader}
       />
       <Route
         path="credentials/password"
@@ -65,11 +61,37 @@ export const routes = createBrowserRouter(
         loader={changeConfirmCodeLoader}
         element={<ChangeCredentials changeConfirmationCode={true} />}
       />
-      <Route path="admins" element={<Admins />} loader={adminsLoader}  />
-      <Route path="admins/:id" element={<Admin />} action={createAdmin} loader={adminLoader} />
-      <Route path="categories" element={<Categories />} loader={categoriesLoader} />
-      <Route path="categories/:id" action={createCategory} element={<Category />} loader={categoryLoader} />
-      <Route path="statistics" element={<Statistics />} loader={statisticsLoader} />
+
+      <Route path="vcards" loader={vcardsLoader} element={<Vcards />} />
+      <Route
+        path="vcards/:id"
+        element={<VCard />}
+        action={vcardAction}
+        loader={vcardLoader}
+      />
+      <Route path="admins" element={<Admins />} loader={adminsLoader} />
+      <Route
+        path="admins/:id"
+        element={<Admin />}
+        action={createAdmin}
+        loader={adminLoader}
+      />
+      <Route
+        path="categories"
+        element={<Categories />}
+        loader={categoriesLoader}
+      />
+      <Route
+        path="categories/:id"
+        action={createCategory}
+        element={<Category />}
+        loader={categoryLoader}
+      />
+      <Route
+        path="statistics"
+        element={<Statistics />}
+        loader={statisticsLoader}
+      />
       <Route path="*" element={<NotFound />} />
     </Route>,
   ),
