@@ -4,12 +4,16 @@ import TopBar from "./TopBar";
 import LeftBar from "./LeftBar";
 import { logout } from "../assets/api";
 import { useSelector, useDispatch } from "react-redux";
-import { clear } from "../stores/user";
+import { clear as clearUser } from "../stores/user";
+import { clear as clearVcard } from "../stores/vcard";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
+import { getVcard } from "../stores/vcard";
 
 const Layout = () => {
   const user = useSelector((state) => state.user);
+  const vcard = useSelector((state) => state.vcard);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -22,22 +26,23 @@ const Layout = () => {
     }
   };
 
+  useEffect(() => {
+    if (user?.user_type === "V" && vcard === null) {
+      dispatch(getVcard(user.id));
+    }
+  }, [user]);
+
   async function logoutClick() {
     const leaved = await logout();
     if (leaved) {
-      toast.success('Logout Completed!');
-      dispatch(clear());
+      toast.success("Logout Completed!");
+      dispatch(clearUser());
+      dispatch(clearVcard());
     } else {
       toast.error("Error to Logout!!");
     }
     navigate("/");
   }
-
-  //Variaveis temporarias
-  const vCardsStore = {
-    vcardMaxDebit: 100,
-    vcardBalance: 1000,
-  };
 
   return (
     <>
@@ -75,7 +80,7 @@ const Layout = () => {
             user={user}
             logout={logoutClick}
             clickMenuOption={clickMenuOption}
-            vCardsStore={vCardsStore}
+            vcard={vcard}
           />
         </div>
       </nav>

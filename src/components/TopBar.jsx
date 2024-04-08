@@ -13,7 +13,7 @@ import defaultImg from "../assets/imgs/avatar-none.png";
 const TopBar = (props) => {
   const userStore = props.user;
   const clickMenuOption = props.clickMenuOption;
-  const vCardsStore = props.vCardsStore;
+  const vcard = props.vcard;
   const logout = props.logout;
 
   return (
@@ -22,10 +22,10 @@ const TopBar = (props) => {
       {userStore?.user_type === "V" && (
         <div>
           <span className="badge bg-light mx-1 text-xl-large text-dark">
-            Max Debit: {vCardsStore.vcardMaxDebit}
+            Max Debit: {vcard?.max_debit ?? 0}
           </span>
           <span className="badge bg-light mx-1 text-xl-large text-dark">
-            Balance: {vCardsStore.vcardBalance}
+            Balance: {vcard?.balance ?? 0}
           </span>
         </div>
       )}
@@ -93,7 +93,9 @@ const TopBar = (props) => {
                     isActive ? "active dropdown-item" : "dropdown-item"
                   }
                   to={
-                    userStore.user_type === "A" ? `admins/${userStore.id}` : `vcards/${userStore.id}`
+                    userStore.user_type === "A"
+                      ? `admins/${userStore.id}`
+                      : `vcards/${userStore.id}`
                   }
                   onClick={clickMenuOption}
                 >

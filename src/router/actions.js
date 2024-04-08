@@ -13,7 +13,9 @@ import {
 } from "../assets/api";
 import * as utils from "../assets/utils";
 import store from "../stores";
-import { clear, getUser } from "../stores/user";
+import { clear as clearUser, getUser } from "../stores/user";
+import { clear as clearVcard } from "../stores/vcard";
+import { getVcard } from "../stores/vcard";
 import { toast } from "react-toastify";
 import { redirect } from "react-router-dom";
 
@@ -211,7 +213,8 @@ export async function changePasswordAction({ request }) {
 
   switch (response) {
     case true:
-      store.dispatch(clear());
+      store.dispatch(clearUser());
+      store.dispatch(clearVcard());
       toast.success("Credentials Changed Successfully!");
       return redirect("/");
     case 422:
@@ -264,7 +267,8 @@ export async function changeConfirmCodeAction({ request }) {
 
   switch (response) {
     case true:
-      store.dispatch(clear());
+      store.dispatch(clearUser());
+      store.dispatch(clearVcard());
       toast.success("Credentials Changed Successfully!");
       return redirect("/");
     case 422:
@@ -557,6 +561,8 @@ export async function transactionAction({ request, params }) {
 
     if (response === true) {
       toast.success("Transaction Performed");
+      //Update the store vcard for V users
+      user.user_type === "V" && store.dispatch(getVcard(user.id));
       return redirect("/transactions");
     } else {
       const message =
