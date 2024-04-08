@@ -9,6 +9,8 @@ import {
   getVcards,
   getVcard,
   getPiggybank,
+  getTransactions,
+  getTransaction,
 } from "../assets/api";
 import { verfIsNumber, verfPhoneNumber } from "../assets/utils";
 
@@ -115,7 +117,7 @@ export function piggybankLoader() {
     return redirect("/");
   }
 
-  return defer({data: getPiggybank(user.id)});
+  return defer({ data: getPiggybank(user.id) });
 }
 
 // ================== Admins
@@ -143,6 +145,41 @@ export function adminLoader({ params }) {
     return defer({
       admin: getAdmin(params.id),
       edit: true,
+    });
+  }
+
+  return redirect("/");
+}
+
+// ================== Transactions
+export function transactionsLoader() {
+  const user = store.getState().user;
+  if (user === null || user.user_type !== "V") {
+    return redirect("/");
+  }
+
+  return defer({ transactions: getTransactions(user.id) });
+}
+
+export function transactionLoader({ params }) {
+  const user = store.getState().user;
+  if (user === null) {
+    return redirect("/");
+  }
+  if (params.id === "new") {
+    return defer({
+      operation: "insert",
+      categories: getCategories({ type: user.user_type, id: user.id }),
+    });
+  }
+  if (verfIsNumber(params.id)) {
+    if (user.user_type !== "V") {
+      return redirect("/");
+    }
+    return defer({
+      transaction: getTransaction(params.id),
+      categories: getCategories({ type: user.user_type, id: user.id }),
+      operation: "update",
     });
   }
 

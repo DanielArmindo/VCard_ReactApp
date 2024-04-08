@@ -10,6 +10,7 @@ import {
   createAdmin,
   createCategory,
   loginAction,
+  transactionAction,
   vcardAction,
 } from "./actions";
 import {
@@ -22,6 +23,8 @@ import {
   loginLoader,
   piggybankLoader,
   statisticsLoader,
+  transactionLoader,
+  transactionsLoader,
   vcardLoader,
   vcardsLoader,
 } from "./loaders";
@@ -40,6 +43,8 @@ import Admins from "../components/admins/Admins";
 import Admin from "../components/admins/Admin";
 import Vcards from "../components/vcards/Vcards";
 import Piggybank from "../components/piggybank/Piggybank";
+import Transactions from "../components/transactions/Transactions";
+import Transaction from "../components/transactions/Transaction";
 
 export const routes = createBrowserRouter(
   createRoutesFromElements(
@@ -71,6 +76,17 @@ export const routes = createBrowserRouter(
         action={vcardAction}
         loader={vcardLoader}
       />
+      <Route
+        path="transactions"
+        loader={transactionsLoader}
+        element={<Transactions />}
+      />
+      <Route
+        path="transactions/:id"
+        loader={transactionLoader}
+        action={transactionAction}
+        element={<Transaction />}
+      />
       <Route path="admins" element={<Admins />} loader={adminsLoader} />
       <Route
         path="admins/:id"
@@ -94,7 +110,11 @@ export const routes = createBrowserRouter(
         element={<Statistics />}
         loader={statisticsLoader}
       />
-      <Route path="piggybank" element={<Piggybank />} loader={piggybankLoader} />
+      <Route
+        path="piggybank"
+        element={<Piggybank />}
+        loader={piggybankLoader}
+      />
       <Route path="*" element={<NotFound />} />
     </Route>,
   ),

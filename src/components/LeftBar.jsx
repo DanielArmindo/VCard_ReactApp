@@ -88,19 +88,33 @@ const LeftBar = (props) => {
                     </NavLink>
                   </li>
                   <li className="nav-item mb-2">
-                    <Link className="nav-link" to="">
+                    <NavLink
+                      className={({ isActive }) =>
+                        isActive
+                          ? "active nav-link pt-3 pb-3"
+                          : "nav-link pt-3 pb-3"
+                      }
+                      to="transactions/new"
+                    >
                       <BsCash className="me-2" size={24} />
                       Credit transaction
-                    </Link>
+                    </NavLink>
                   </li>
                 </>
               )}
               {userStore?.user_type !== "A" && (
                 <li className="nav-item mb-2">
-                  <Link className="nav-link" to="">
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive
+                        ? "active nav-link pt-3 pb-3"
+                        : "nav-link pt-3 pb-3"
+                    }
+                    to="transactions"
+                  >
                     <BsBank className="me-2" size={24} />
                     Transactions
-                  </Link>
+                  </NavLink>
                 </li>
               )}
               {userStore?.user_type === "V" && (

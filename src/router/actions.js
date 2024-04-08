@@ -8,6 +8,8 @@ import {
   updateAdmin,
   patchVcard,
   putVcard,
+  postTransaction,
+  patchTransaction,
 } from "../assets/api";
 import * as utils from "../assets/utils";
 import store from "../stores";
@@ -466,5 +468,126 @@ export async function createAdmin({ request, params }) {
         break;
     }
   }
+  return null;
+}
+
+export async function transactionAction({ request, params }) {
+  const formData = await request.formData();
+  const user = store.getState().user;
+
+  let error = {};
+  let response = null;
+  let arrayPaymentType = ["MBWAY", "PAYPAL", "IBAN", "MB", "VISA"];
+  user.user_type === "V" && arrayPaymentType.push("VCARD");
+
+  const requestData = {
+    confirmation_code: formData.get("confirmation_code"),
+    payment_type: formData.get("payment_type"),
+    payment_reference: formData.get("payment_reference"),
+    description:
+      formData.get("description") === "" ? null : formData.get("description"),
+    category_id:
+      formData.get("category_id") === "" ? null : formData.get("category_id"),
+    value: formData.get("value"),
+  };
+
+  //Inserting transaction
+  if (params.id === "new") {
+    // By user
+    if (user.user_type === "V") {
+      if (!utils.verfConfirmCode(requestData.confirmation_code)) {
+        toast.error("Code must have 3 digits");
+        return null;
+      }
+      arrayPaymentType.indexOf(requestData.payment_type) === -1 &&
+        (error.payment_type =
+          "Payment type must be one of the types indicated");
+
+      if (parseFloat(requestData.value) <= 0.0) {
+        error.value = "Value must be a number above 0";
+      }
+
+      if (Object.keys(error).length !== 0) {
+        return error;
+      }
+
+      const updatedRequestData = {
+        ...requestData,
+        value: parseFloat(requestData.value),
+        category_id:
+          requestData.category_id !== null
+            ? parseInt(requestData.category_id)
+            : null,
+      };
+
+      response = await postTransaction({
+        type: user.user_type,
+        data: updatedRequestData,
+      });
+    } else {
+      //By Admin
+      arrayPaymentType.indexOf(requestData.payment_type) === -1 &&
+        (error.payment_type =
+          "Payment type must be one of the types indicated");
+
+      if (parseFloat(requestData.value) <= 0.0) {
+        error.value = "Value must be a number above 0";
+      }
+
+      !utils.verfPhoneNumber(formData.get("vcard")) &&
+        (error.vcard = "It must start with 9 and have 9 digits!!");
+
+      if (Object.keys(error).length !== 0) {
+        return error;
+      }
+
+      const updatedRequestData = {
+        payment_type: requestData.payment_type,
+        payment_reference: requestData.payment_reference,
+        vcard: formData.get("vcard"),
+        value: parseFloat(requestData.value),
+        description: requestData.value,
+      };
+
+      response = await postTransaction({
+        type: user.user_type,
+        data: updatedRequestData,
+      });
+    }
+
+    if (response === true) {
+      toast.success("Transaction Performed");
+      return redirect("/transactions");
+    } else {
+      const message =
+        typeof response === "string"
+          ? response
+          : "Error to perform transaction";
+      toast.error(message);
+    }
+  }
+
+  if (utils.verfIsNumber(params.id)) {
+    response = await patchTransaction({
+      id: params.id,
+      data: {
+        description: requestData.description,
+        category_id:
+          requestData.category_id !== null
+            ? parseInt(requestData.category_id)
+            : null,
+      },
+    });
+
+    if (response === true) {
+      toast.success("Transaction Updated");
+      return redirect("/transactions");
+    } else {
+      const message =
+        typeof response === "string" ? response : "Error to Update transaction";
+      toast.error(message);
+    }
+  }
+
   return null;
 }

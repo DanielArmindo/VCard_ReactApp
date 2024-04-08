@@ -273,8 +273,8 @@ export async function updateSavings(obj) {
   }
 }
 
-export async function updateSpareChange(obj){
-try {
+export async function updateSpareChange(obj) {
+  try {
     await api.patch(`vcards/${obj.id}/piggybank/sparechange`, {
       spare_change: obj.data,
     });
@@ -344,6 +344,63 @@ export async function deleteAdmin(id) {
   } catch (err) {
     if (err.response && err.response.status) {
       return err.response;
+    }
+    return false;
+  }
+}
+
+// ============= Related to Transactions
+
+export async function getTransactions(id, page = 1, params = "") {
+  try {
+    const filter = params ? `&${params}` : "";
+    const response = await api.get(
+      `vcards/${id}/transactions?page=${page}${filter}`,
+    );
+    return { transactions: response.data.data, meta: response.data.meta };
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response;
+    }
+    return false;
+  }
+}
+
+export async function getTransaction(id) {
+  try {
+    const response = await api.get("transactions/" + id);
+    return response.data.data;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      throw err.response;
+    }
+    throw false;
+  }
+}
+
+export async function postTransaction(obj) {
+  try {
+    if (obj.type === "A") {
+      await api.post("transactions/credit", obj.data);
+    } else {
+      await api.post("transactions/debit", obj.data);
+    }
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response.data?.message;
+    }
+    return false;
+  }
+}
+
+export async function patchTransaction(obj) {
+  try {
+    await api.patch("transactions/" + obj.id, obj.data);
+    return true;
+  } catch (err) {
+    if (err.response && err.response.status) {
+      return err.response.data?.message;
     }
     return false;
   }
