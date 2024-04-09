@@ -18,6 +18,7 @@ import { clear as clearVcard } from "../stores/vcard";
 import { getVcard } from "../stores/vcard";
 import { toast } from "react-toastify";
 import { redirect } from "react-router-dom";
+import { socket } from "../assets/sockets";
 
 export async function loginAction({ request }) {
   const formData = await request.formData();
@@ -37,20 +38,14 @@ export async function loginAction({ request }) {
   }
 
   const connected = await login({ username, password });
-  switch (connected) {
-    case true:
-      store.dispatch(getUser());
-      toast.success("Successful Login!");
-      return redirect("/");
-    case 400:
-      toast.error("Invalid Credentials");
-      break;
-    case 500:
-      toast.error("Error to login...");
-      break;
-    default:
-      toast.error("Unable to log in");
-      break;
+  if (connected === true) {
+    store.dispatch(getUser());
+    toast.success("Successful Login!");
+    return redirect("/");
+  } else {
+    const message =
+      typeof connected === "string" ? connected : "Unable to login";
+    toast.error(message);
   }
 
   return null;
@@ -60,7 +55,6 @@ export async function vcardAction({ request, params }) {
   const user = store.getState().user;
   const formData = await request.formData();
 
-  //Implementado apenas para criar vcard ainda
   const requestData = {
     name: formData.get("name"),
     email: formData.get("email"),
@@ -157,12 +151,20 @@ export async function vcardAction({ request, params }) {
       });
     }
 
-    //colocar socket emit para blocked ou quando o max_debit for alterado
-
     switch (response) {
       case true:
         toast.success(`Vcard #${params.id} was updated successfully.`);
         user.user_type === "V" && store.dispatch(getUser());
+        //Sockets
+        requestData.blocked
+          ? socket.emit("blockedVCard", user, { phone_number: params.id })
+          : formData.get("whoEmit")
+            ? socket.emit("maxDebitUpdated", {
+                phone_number: params.id,
+                max_debit: requestData.max_debit,
+              })
+            : null;
+
         return user.user_type === "A" ? redirect("/vcards") : redirect("/");
       case 422:
         toast.error(

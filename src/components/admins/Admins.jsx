@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import ConfirmationDialog from "../global/ConfirmationDialog";
 import { deleteAdmin as deleteAdminApi } from "../../assets/api";
 import { toast } from "react-toastify";
+import { socket } from "../../assets/sockets";
 
 const Admins = () => {
   const dataPromise = useLoaderData();
@@ -36,6 +37,9 @@ const Admins = () => {
     const response = await deleteAdminApi(modalInfo.id);
     if (response === true) {
       document.getElementById("close_modal").click();
+      //Socket
+      const elementDeleted = admins.find((item) => item.id === modalInfo.id);
+      socket.emit("deletedAdmin", user, elementDeleted);
       toast.info("Admin Erased");
       setAdmins((prev) => prev.filter((item) => item.id !== modalInfo.id));
     } else {

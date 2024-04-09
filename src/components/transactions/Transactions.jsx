@@ -6,6 +6,10 @@ import { BiPencil } from "react-icons/bi";
 import Pagination from "../global/Pagination";
 import { useSelector } from "react-redux";
 import { getTransactions } from "../../assets/api";
+import RequestTransactionDialog from "../global/RequestTransactionDialog";
+import { verfPhoneNumber, verfIsNumber } from "../../assets/utils";
+import { toast } from "react-toastify";
+import { socket } from "../../assets/sockets.jsx";
 
 const Transactions = () => {
   const user = useSelector((state) => state.user);
@@ -13,6 +17,9 @@ const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [pages, setPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [value, setValue] = useState("");
+  const [errors, setErrors] = useState({});
   const [searchParams, setSearchParams] = useState({
     payment_reference: "",
     start_date: "",
@@ -27,6 +34,42 @@ const Transactions = () => {
       setPages(data.meta);
     });
   }, [dataPromise]);
+
+  // Request Transactions
+  const requestTransaction = () => {
+    //verifications
+    !verfIsNumber(value)
+      ? setErrors((prev) => ({ ...prev, value: "Value must be a number" }))
+      : setErrors((prev) => {
+          const { value, ...rest } = prev;
+          return rest;
+        });
+
+    !verfPhoneNumber(phoneNumber)
+      ? setErrors((prev) => ({
+          ...prev,
+          phoneNumber: "It must start with 9 and have 9 digits!!",
+        }))
+      : setErrors((prev) => {
+          const { phoneNumber, ...rest } = prev;
+          return rest;
+        });
+
+    if (Object.keys(errors).length === 0) {
+      if (user.id === parseInt(phoneNumber)) {
+        toast.error(
+          "It is not possible to request a transaction for the same person",
+        );
+      } else {
+        // SocketEmit
+        socket.emit("moneyRequest", user.id, phoneNumber, parseInt(value));
+        toast.success("Money request sent successfully!");
+        setPhoneNumber("");
+        setValue("");
+        document.getElementById("close_modal").click();
+      }
+    }
+  };
 
   useEffect(() => {
     // Give time to write, does not sub-load with requests
@@ -117,6 +160,16 @@ const Transactions = () => {
 
   return (
     <>
+      <RequestTransactionDialog
+        action={requestTransaction}
+        data={{
+          phoneNumber: phoneNumber,
+          setPhoneNumber: setPhoneNumber,
+          value: value,
+          setValue: setValue,
+        }}
+        errors={errors}
+      />
       <div className="d-flex justify-content-between align-items-center">
         <div className="mx-2">
           <h3 className="mt-4">My Transactions</h3>
@@ -209,7 +262,10 @@ const Transactions = () => {
             <FiPlusCircle size={20} />
             &nbsp; Send Money
           </Link>
-          <button className="btn btn-primary px-4 btn-askForMoney">
+          <button
+            className="btn btn-primary px-4 btn-askForMoney"
+            onClick={() => document.getElementById("show_modal").click()}
+          >
             <FiPlusCircle size={20} />
             &nbsp; Ask for Money
           </button>

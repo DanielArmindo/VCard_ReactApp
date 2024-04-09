@@ -5,8 +5,6 @@ const ChangeCredentials = (props) => {
   const changeConfirmationCode = props.changeConfirmationCode;
   const navigation = useNavigation();
   const errors = useActionData();
-
-  //Para quando se muda de rota atualizar os campos
   const [password, setPassword] = useState("");
   const [confirmationCode, setConfirmationCode] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");

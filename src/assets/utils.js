@@ -13,7 +13,7 @@ export function getWsConnection() {
   return wsConnection;
 }
 
-// Funções para verificação de campos
+// ================== Functions for checking fields
 
 export function verfPhoneNumber(numero) {
   // start with 9 and have 9 digits at total

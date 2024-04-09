@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { deleteVcard as deleteVcardApi } from "../../assets/api";
 import { clear } from "../../stores/user";
 import DecisionDialog from "../global/DecisionDialog";
+import { socket } from "../../assets/sockets";
 
 const VCard = () => {
   const dataFromLoader = useLoaderData();
@@ -21,6 +22,8 @@ const VCard = () => {
   const navigate = useNavigate();
   const navigation = useNavigation();
   const [vcard, setVcard] = useState({});
+  const maxDebitBackup = useRef({});
+  const [maxUpdated, setMaxUpdated] = useState([]);
   const user = useSelector((state) => state.user);
   const errors = useActionData();
   const [modalText, setModalText] = useState("");
@@ -50,12 +53,21 @@ const VCard = () => {
       ...prev,
       [name]: fieldValue,
     }));
+    if (user.user_type === "A" && name === "max_debit") {
+      console.log(Boolean(vcard.blocked), maxDebitBackup.current);
+      setMaxUpdated(
+        maxDebitBackup.current.max_debit === vcard.max_debit
+          ? false
+          : "max_debit",
+      );
+    }
   }
 
   useEffect(() => {
     if (errors === undefined) {
       dataFromLoader?.vcard?.then((data) => {
         setVcard(data);
+        maxDebitBackup.current = data.max_debit;
         if (data.photo_url !== null) {
           setPhotoUrl(getPhotoURL(data.photo_url));
         }
@@ -101,7 +113,8 @@ const VCard = () => {
     if (response === true) {
       document.getElementById("close_modal").click();
       toast.info("Vcard Erased");
-
+      //Socket
+      socket.emit("deletedVCard", user, { phone_number: vcard.phone_number });
       //For owner Vcard
       if (typeUser === "V") {
         dispatch(clear());
@@ -187,6 +200,15 @@ const VCard = () => {
         />
       )}
       <Form method="post" className="row g-3 needs-validation">
+        {!dataFromLoader.create && user?.user_type === "A" && (
+          <input
+            className="d-none"
+            name="whoEmit"
+            type="checkbox"
+            checked={maxUpdated}
+            onChange={(e) => setMaxUpdated(e.target.checked)}
+          />
+        )}
         <input
           className="d-none"
           name="photoServer"

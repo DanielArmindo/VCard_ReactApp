@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   BsBoxArrowInRight,
   BsFillPersonCheckFill,
@@ -18,7 +18,6 @@ const TopBar = (props) => {
 
   return (
     <div className="collapse navbar-collapse justify-content-end">
-      {/*TODO: tentar dar refactor de modo a que os valores relativos aos users fique em outro sitio*/}
       {userStore?.user_type === "V" && (
         <div>
           <span className="badge bg-light mx-1 text-xl-large text-dark">
@@ -30,9 +29,6 @@ const TopBar = (props) => {
         </div>
       )}
       <ul className="navbar-nav">
-        {/* Create a new vcard if you haven't logged in
-                  TODO: dar refactor e por link para crear novo vcard,
-                  meter active na class caso seja selecionado, para os 2 li*/}
         {!userStore ? (
           <>
             <li className="nav-item">
@@ -87,7 +83,6 @@ const TopBar = (props) => {
               aria-labelledby="navbarDropdownMenuLink"
             >
               <li>
-                {/*TODO: Neste seguinte link: caso for user manda para VCard com os params phoneNumber:userStore.userId*/}
                 <NavLink
                   className={({ isActive }) =>
                     isActive ? "active dropdown-item" : "dropdown-item"

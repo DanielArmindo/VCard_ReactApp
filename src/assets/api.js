@@ -1,7 +1,7 @@
 import axios from "axios";
+import { socket } from "./sockets";
 
 const apiDomain = import.meta.env.VITE_API_DOMAIN;
-const wsConnection = import.meta.env.VITE_WS_CONNECTION;
 
 export const api = axios.create({
   baseURL: apiDomain + "/api",
@@ -17,12 +17,11 @@ export async function login(credentials) {
     sessionStorage.setItem("tokken", response.data.access_token);
     api.defaults.headers.common.Authorization =
       "Bearer " + response.data.access_token;
-    // socket.emit('loggedIn', user.value)
     return true;
   } catch (error) {
     clearTokken();
     if (error.response && error.response.status) {
-      return error.response.status;
+      return error.response.data?.msg;
     }
     return false;
   }
@@ -380,11 +379,13 @@ export async function getTransaction(id) {
 
 export async function postTransaction(obj) {
   try {
+    let response;
     if (obj.type === "A") {
-      await api.post("transactions/credit", obj.data);
+      response = await api.post("transactions/credit", obj.data);
     } else {
-      await api.post("transactions/debit", obj.data);
+      response = await api.post("transactions/debit", obj.data);
     }
+    socket.emit("newTransaction", response.data.data);
     return true;
   } catch (err) {
     if (err.response && err.response.status) {

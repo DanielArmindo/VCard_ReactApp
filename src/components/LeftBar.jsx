@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   BsBoxArrowInRight,
   BsFillPersonCheckFill,
@@ -29,7 +29,6 @@ const LeftBar = (props) => {
         <>
           {userStore && (
             <ul className="nav flex-column">
-              {/*Meter activo quando tiver caso e para a rota correpondente*/}
               <li className="nav-item mb-2">
                 <NavLink
                   className={({ isActive }) =>
@@ -140,10 +139,8 @@ const LeftBar = (props) => {
               <span>User</span>
             </h6>
             <ul className="nav flex-column mb-2">
-              {/*TODO: meter active e para a respetiva rota*/}
               {userStore ? (
                 <li className="nav-item dropdown">
-                  {/*Colocar na 1ª imagem a foto do utilizador*/}
                   <a
                     className="nav-link dropdown-toggle"
                     href="#"
@@ -164,7 +161,6 @@ const LeftBar = (props) => {
                     <span className="avatar-text">{userStore?.name}</span>
                   </a>
 
-                  {/*Repetir a mesma cena como na navbar1*/}
                   <ul
                     className="dropdown-menu"
                     aria-labelledby="navbarDropdownMenuLink2"

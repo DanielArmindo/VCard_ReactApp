@@ -9,8 +9,11 @@ import { BiPencil, BiTrash } from "react-icons/bi";
 import { getPhotoURL } from "../../assets/utils";
 import { deleteVcard as deleteVcardApi, getVcards } from "../../assets/api";
 import Pagination from "../global/Pagination";
+import { socket } from "../../assets/sockets";
+import { useSelector } from "react-redux";
 
 const Vcards = () => {
+  const user = useSelector((state) => state.user);
   const dataPromise = useLoaderData();
   const [vcards, setVcards] = useState([]);
   const [pages, setPages] = useState(null);
@@ -78,9 +81,12 @@ const Vcards = () => {
   };
 
   const deleteVcard = async () => {
-    const response = await deleteVcardApi({id:modalInfo.id});
+    const response = await deleteVcardApi({ id: modalInfo.id });
     if (response === true) {
       document.getElementById("close_modal").click();
+      //Socket
+      const elementDeleted = vcards.find((item) => item.phone_number === modalInfo.id);
+      socket.emit("deletedVCard", user, elementDeleted);
       toast.info("Vcard Erased");
       setVcards((prev) =>
         prev.filter((item) => item.phone_number !== modalInfo.id),
@@ -119,7 +125,10 @@ const Vcards = () => {
           )}
           <td className="text-end align-middle">
             <div className="d-flex justify-content-end">
-              <Link to={`${item.phone_number}`} className="btn btn-xs btn-light">
+              <Link
+                to={`${item.phone_number}`}
+                className="btn btn-xs btn-light"
+              >
                 <BiPencil size={24} />
               </Link>
               <button

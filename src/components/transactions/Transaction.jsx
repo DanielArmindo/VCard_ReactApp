@@ -142,7 +142,6 @@ const Transaction = () => {
             onChange={handleForm}
             required
           />
-          {/*errors here, class is-invalid*/}
         </div>
         {user.user_type === "A" && (
           <div className="mb-3">
@@ -226,7 +225,6 @@ const Transaction = () => {
                 <option value="">Sem categoria</option>
                 {categoriesElements}
               </select>
-              {/*errors here, class is-invalid */}
             </div>
             <div className="mb-3">
               <label htmlFor="inputDescription" className="form-label">
@@ -241,7 +239,6 @@ const Transaction = () => {
                 value={transaction?.description || ""}
                 onChange={handleForm}
               />
-              {/*errors here, class is-invalid */}
             </div>
           </>
         )}

@@ -20,7 +20,7 @@ const vcardSlice = createSlice({
     builder
       // .addCase(getUser.pending, () => null )
       .addCase(getVcard.fulfilled, (state, action) => action.payload);
-    // .addCase(getUser.rejected, () => null );
+     // .addCase(getUser.rejected, () => null );
   },
 });
 

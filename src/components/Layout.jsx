@@ -10,12 +10,47 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
 import { getVcard } from "../stores/vcard";
+import { adminSocket, transactionSocket, vcardSocket } from "../assets/sockets.jsx";
+import { socket } from "../assets/sockets.jsx";
 
 const Layout = () => {
   const user = useSelector((state) => state.user);
   const vcard = useSelector((state) => state.vcard);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  //Related to WebSockets
+  useEffect(() => {
+    let adminSocketInstance, vcardSocketInstance, transactionSocketInstance;
+    let cleanAdmin, cleanVcard, cleanTransaction;
+
+    if (user !== null && user.user_type === "A") {
+      const adminData = adminSocket(navigate, user, dispatch);
+      adminSocketInstance = adminData.socket;
+      cleanAdmin = adminData.cleanup;
+    }
+
+    if (user !== null) {
+      const vcardData = vcardSocket(navigate, user, dispatch);
+      vcardSocketInstance = vcardData.socket;
+      cleanVcard = vcardData.cleanup;
+      const transactionData = transactionSocket(user,dispatch)
+      transactionSocketInstance = transactionData.socket;
+      cleanTransaction = transactionData.cleanup;
+    }
+
+    return () => {
+      if (adminSocketInstance) {
+        cleanAdmin();
+      }
+      if (vcardSocketInstance) {
+        cleanVcard();
+      }
+      if (transactionSocketInstance) {
+        cleanTransaction();
+      }
+    };
+  }, [user]);
 
   const clickMenuOption = () => {
     const domReference = document.getElementById("buttonSidebarExpandId");
@@ -29,6 +64,9 @@ const Layout = () => {
   useEffect(() => {
     if (user?.user_type === "V" && vcard === null) {
       dispatch(getVcard(user.id));
+    }
+    if (user !== null) {
+      socket.emit("loggedIn", user);
     }
   }, [user]);
 

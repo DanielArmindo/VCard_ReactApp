@@ -15,7 +15,6 @@ import {
 import { verfIsNumber, verfPhoneNumber } from "../assets/utils";
 
 export function loginLoader() {
-  // console.log("loader", store.getState().user, store.getState().user === null)
   if (!(store.getState().user === null)) {
     return redirect("/");
   }
