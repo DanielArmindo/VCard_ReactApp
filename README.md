@@ -4,7 +4,7 @@ The **main aim** of this project is to implement a Single Page Application (SPA)
 
 The main focus of the application developed in this project is the management of vCards, which are used to represent a person or entity's contact information. React was chosen as the front-end library due to its popularity, robustness and flexibility, providing an agile and efficient development environment.
 
-==Attention==
+**Attention**
 
 This project is **based on the same scenario presented in the [VCard_WebApp](https://github.com/DanielArmindo/VCard_WebApp) repository**. To run the web application resulting from this project, it will be necessary to use all the components present in the aforementioned repository, with the exception of those related to the Vue.js framework. This approach allows for harmonious integration between the parts developed, guaranteeing the consistency and functionality expected by the end user.
 
@@ -54,4 +54,4 @@ npm run build
 
 When changing the laravel url, don't forget to modify the **VITE_API_DOMAIN** variable in the vue app's **.env.development** file.
 
-==Caution== - To log-in into web application you need to go to the database and get an username from view_table and the password for anyone is 123
+**Caution** - To log-in into web application you need to go to the database and get an username from view_table and the password for anyone is 123
