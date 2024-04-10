@@ -18,6 +18,8 @@ The decision was made not to use a framework that uses the React library, in ord
 
 I believe that this approach provides not only a deeper understanding of React, but also develops transferable skills that make it easier to adapt to different frameworks that use React in the future.
 
+As far as the design of the application is concerned, it **was decided to keep the original layout from Vue.js**, since the focus is primarily on React's functionality and not on visual aesthetics.
+
 # Libraries Used
 
 This application used the following libraries (react is not mentioned as it is installed with vitejs):
